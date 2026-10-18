@@ -42,6 +42,13 @@ class ApiService {
     });
   }
 
+  async registrar(dados: { nome: string; email: string; senha: string; iesId: string; cargo?: 'GESTOR' | 'PROFESSOR' | 'NAI' }) {
+    return this.request<{ accessToken: string; usuario: any }>('/auth/registro', {
+      method: 'POST',
+      body: JSON.stringify(dados),
+    });
+  }
+
   async loginGoogle(googleId: string, email: string, nome: string) {
     return this.request<{ accessToken: string; usuario: any }>('/auth/google', {
       method: 'POST',

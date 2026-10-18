@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   MdAutoAwesome,
@@ -5,8 +6,7 @@ import {
   MdShield,
   MdArrowForward,
   MdCheckCircle,
-  MdGroups,
-  MdAccessibilityNew
+  MdGroups
 } from 'react-icons/md';
 
 export default function Home() {
@@ -15,15 +15,9 @@ export default function Home() {
       {/* Top Navbar */}
       <header className="border-b border-slate-800 bg-slate-950/50 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-teal-400 flex items-center justify-center text-white shadow-md">
-              <MdAccessibilityNew size={24} />
-            </div>
-            <div>
-              <span className="text-xl font-bold tracking-tight text-white">Pluralis</span>
-              <p className="text-[10px] text-indigo-300 font-medium tracking-wider uppercase">Acessibilidade Pedagógica</p>
-            </div>
-          </div>
+          <Link href="/" className="flex items-center gap-3" aria-label="Pluralis — página inicial">
+            <Image src="/pluralis-logo.png" alt="Pluralis — Acessibilidade Pedagógica" width={150} height={52} priority className="h-11 w-auto" />
+          </Link>
 
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
             <a href="#solucao" className="hover:text-white transition-colors">A Solução</a>
@@ -33,7 +27,7 @@ export default function Home() {
 
           <div className="flex items-center gap-4">
             <Link
-              href="/dashboard"
+              href="/login"
               className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all shadow-md shadow-indigo-600/20"
             >
               <span>Acessar Plataforma</span>
@@ -60,14 +54,14 @@ export default function Home() {
 
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
           <Link
-            href="/dashboard"
+            href="/login"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-indigo-600/30 cursor-pointer"
           >
             <MdAutoAwesome size={18} />
             <span>Experimentar Adaptação IA</span>
           </Link>
           <Link
-            href="/dashboard/capacitacao"
+            href="/login"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-8 py-3.5 rounded-xl font-semibold text-sm transition-all cursor-pointer"
           >
             <MdSchool size={18} />

@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'Pluralis - Plataforma de Acessibilidade Pedagógica',
   description: 'B2B SaaS de adaptação curricular com IA generativa ética, capacitação docente e conformidade legal LBI.',
   icons: {
-    icon: '/pluralis-logo.svg',
+    icon: '/pluralis-logo.png',
   },
 };
 

@@ -12,9 +12,9 @@ import {
   MdSettings,
   MdMenu,
   MdClose,
-  MdLogout,
-  MdAccessibilityNew
+  MdLogout
 } from 'react-icons/md';
+import Image from 'next/image';
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: MdDashboard },
@@ -58,14 +58,8 @@ export const Sidebar: React.FC = () => {
       >
         <div>
           {/* Brand Logo & Name */}
-          <div className="h-20 flex items-center gap-3 px-6 border-b border-slate-800">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-teal-400 flex items-center justify-center text-white shadow-md">
-              <MdAccessibilityNew size={24} />
-            </div>
-            <div>
-              <span className="text-xl font-bold tracking-tight text-white">Pluralis</span>
-              <p className="text-xs text-indigo-300 font-medium tracking-wide">Acessibilidade Pedagógica</p>
-            </div>
+          <div className="h-20 flex items-center px-6 border-b border-slate-800">
+            <Image src="/pluralis-logo.png" alt="Pluralis — Acessibilidade Pedagógica" width={150} height={52} priority className="h-11 w-auto" />
           </div>
 
           {/* Navigation Links */}
@@ -106,8 +100,14 @@ export const Sidebar: React.FC = () => {
               </div>
             </div>
             <button
+              type="button"
               title="Encerrar Sessão"
               aria-label="Encerrar Sessão"
+              onClick={() => {
+                localStorage.removeItem('pluralis_token');
+                localStorage.removeItem('pluralis_usuario');
+                window.location.assign('/login');
+              }}
               className="p-2 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-slate-800 transition-colors"
             >
               <MdLogout size={20} />
