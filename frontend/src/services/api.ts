@@ -1,4 +1,7 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const BASE_URL =
+  typeof window === 'undefined'
+    ? process.env.INTERNAL_API_URL || 'http://localhost:3001/api'
+    : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 class ApiService {
   private getToken(): string | null {
@@ -42,7 +45,11 @@ class ApiService {
     });
   }
 
-  async registrar(dados: { nome: string; email: string; senha: string; iesId: string; cargo?: 'GESTOR' | 'PROFESSOR' | 'NAI' }) {
+  async listarInstituicoes() {
+    return this.request<{ id: string; nome: string }[]>('/auth/instituicoes');
+  }
+
+  async registrar(dados: { nome: string; email: string; senha: string; iesId?: string; cargo?: 'GESTOR' | 'PROFESSOR' | 'NAI' }) {
     return this.request<{ accessToken: string; usuario: any }>('/auth/registro', {
       method: 'POST',
       body: JSON.stringify(dados),

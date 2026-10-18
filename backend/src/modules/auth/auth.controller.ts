@@ -18,6 +18,11 @@ export class AuthController {
     return this.authService.login(dto, ip);
   }
 
+  @Get('instituicoes')
+  async listarInstituicoes() {
+    return this.authService.listarInstituicoes();
+  }
+
   @Post('registro')
   async registrar(@Body() dto: RegistroDto, @Ip() ip: string) {
     return this.authService.registrar(dto, ip);

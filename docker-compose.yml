@@ -41,10 +41,13 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        INTERNAL_API_URL: http://backend:3001/api
     container_name: pluralis-frontend
     restart: always
     environment:
-      NEXT_PUBLIC_API_URL: "http://localhost:3001"
+      NEXT_PUBLIC_API_URL: "http://localhost:3001/api"
+      INTERNAL_API_URL: "http://backend:3001/api"
     ports:
       - "3000:3000"
     depends_on:

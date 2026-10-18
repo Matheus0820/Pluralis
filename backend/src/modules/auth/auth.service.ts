@@ -69,6 +69,19 @@ export class AuthService {
   }
 
   /**
+   * Lista instituições cadastradas
+   */
+  async listarInstituicoes() {
+    return this.prisma.instituicao.findMany({
+      select: {
+        id: true,
+        nome: true,
+      },
+      orderBy: { nome: 'asc' },
+    });
+  }
+
+  /**
    * Registro de novo docente ou gestor
    */
   async registrar(dto: RegistroDto, ip = '127.0.0.1') {
@@ -80,6 +93,56 @@ export class AuthService {
       throw new ConflictException('Já existe um usuário cadastrado com este e-mail.');
     }
 
+    let instituicao = null;
+    const iesInput = dto.iesId?.trim();
+
+    if (iesInput) {
+      try {
+        instituicao = await this.prisma.instituicao.findUnique({
+          where: { id: iesInput },
+        });
+      } catch {
+        instituicao = null;
+      }
+
+      if (!instituicao) {
+        instituicao = await this.prisma.instituicao.findFirst({
+          where: {
+            OR: [
+              { nome: { equals: iesInput, mode: 'insensitive' } },
+              { cnpj: iesInput },
+            ],
+          },
+        });
+      }
+
+      if (!instituicao) {
+        try {
+          const cnpjGerado = `${Date.now()}`.padStart(14, '0').slice(-14);
+          instituicao = await this.prisma.instituicao.create({
+            data: {
+              nome: iesInput,
+              cnpj: cnpjGerado,
+            },
+          });
+        } catch {
+          instituicao = null;
+        }
+      }
+    }
+
+    if (!instituicao) {
+      instituicao = await this.prisma.instituicao.findFirst();
+      if (!instituicao) {
+        instituicao = await this.prisma.instituicao.create({
+          data: {
+            nome: 'Universidade Pluralis Demo',
+            cnpj: '00.000.000/0001-00',
+          },
+        });
+      }
+    }
+
     const senhaHash = await this.hashSenha(dto.senha);
 
     const novoUsuario = await this.prisma.usuario.create({
@@ -87,7 +150,7 @@ export class AuthService {
         nome: dto.nome,
         email: dto.email.toLowerCase(),
         senha_hash: senhaHash,
-        ies_id: dto.iesId,
+        ies_id: instituicao.id,
         cargo: dto.cargo || CargoUsuario.PROFESSOR,
       },
       include: { instituicao: true },

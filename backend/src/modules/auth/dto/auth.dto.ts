@@ -23,8 +23,8 @@ export class RegistroDto {
   senha: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'ID da Instituição de Ensino Superior é obrigatório' })
-  iesId: string;
+  @IsOptional()
+  iesId?: string;
 
   @IsOptional()
   cargo?: CargoUsuario;
