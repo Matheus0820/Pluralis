@@ -1,13 +1,9 @@
 'use client';
 
 import React from 'react';
-import {
-  MdNotificationsNone,
-  MdHelpOutline,
-  MdAccountCircle,
-  MdAccessibility,
-  MdContrast
-} from 'react-icons/md';
+import { Bell, HelpCircle, User, Moon, Sun, ZoomIn, ZoomOut, LogOut } from 'lucide-react';
+import { useAccessibility } from '@/context/AccessibilityContext';
+import { useRouter } from 'next/navigation';
 
 interface HeaderProps {
   title: string;
@@ -15,66 +11,105 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
-  const [highContrast, setHighContrast] = React.useState(false);
+  const router = useRouter();
+  const {
+    highContrast,
+    toggleHighContrast,
+    increaseFontSize,
+    decreaseFontSize,
+    fontSize,
+    setGuideOpen,
+  } = useAccessibility();
 
-  const toggleHighContrast = () => {
-    setHighContrast(!highContrast);
-    if (typeof document !== 'undefined') {
-      document.documentElement.classList.toggle('high-contrast');
-    }
+  const handleLogout = () => {
+    localStorage.removeItem('pluralis_token');
+    router.push('/login');
   };
 
   return (
-    <header className="h-20 bg-white border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-30 shadow-xs">
-      {/* Title / Subtitle */}
-      <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">{title}</h1>
-        {subtitle && <p className="text-xs sm:text-sm text-slate-500 font-normal">{subtitle}</p>}
+    <header
+      role="banner"
+      className="h-16 border-b border-slate-200 bg-white px-4 sm:px-6 flex items-center justify-between shadow-sm transition-colors"
+    >
+      <div className="flex-1 min-w-0 pr-4">
+        <h1 className="text-lg sm:text-xl font-bold text-slate-800 truncate">{title}</h1>
+        {subtitle && (
+          <p className="text-xs text-slate-500 truncate hidden sm:block">{subtitle}</p>
+        )}
       </div>
 
-      {/* Accessibility & Action Bar */}
-      <div className="flex items-center gap-2 sm:gap-4">
-        {/* Accessibility Toolbar */}
-        <div className="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200">
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        {/* Quick Accessibility Controls in Dashboard Header */}
+        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
           <button
+            type="button"
             onClick={toggleHighContrast}
-            title="Alternar Alto Contraste (Acessibilidade)"
-            aria-label="Alternar Alto Contraste"
-            className={`p-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all ${
+            aria-pressed={highContrast}
+            aria-label={highContrast ? 'Desativar Alto Contraste' : 'Ativar Alto Contraste (Alt+C)'}
+            title="Alternar Alto Contraste (Alt+C)"
+            className={`p-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
               highContrast
-                ? 'bg-slate-900 text-yellow-300 shadow-xs'
-                : 'text-slate-700 hover:bg-slate-200'
+                ? 'bg-amber-400 text-slate-950 font-bold shadow-sm'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
             }`}
           >
-            <MdContrast size={16} />
-            <span className="hidden sm:inline">Contraste</span>
+            {highContrast ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+
+          <button
+            type="button"
+            onClick={decreaseFontSize}
+            disabled={fontSize === 'sm'}
+            aria-label="Diminuir texto"
+            title="Diminuir fonte (Alt+-)"
+            className="p-1.5 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <ZoomOut className="w-4 h-4" />
+          </button>
+
+          <button
+            type="button"
+            onClick={increaseFontSize}
+            disabled={fontSize === 'xl'}
+            aria-label="Aumentar texto"
+            title="Aumentar fonte (Alt++)"
+            className="p-1.5 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <ZoomIn className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Notifications */}
+        {/* WCAG AAA Badge Button */}
         <button
-          className="p-2 text-slate-600 hover:text-indigo-600 rounded-lg hover:bg-slate-100 transition-colors relative"
-          aria-label="Notificações do Sistema"
-          title="Notificações"
+          type="button"
+          onClick={() => setGuideOpen(true)}
+          className="hidden md:inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-1.5 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          title="Abrir guia de acessibilidade e normas LBI"
         >
-          <MdNotificationsNone size={22} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-600" />
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>LBI Art. 28 / WCAG AAA</span>
         </button>
 
-        {/* Help */}
-        <button
-          className="p-2 text-slate-600 hover:text-indigo-600 rounded-lg hover:bg-slate-100 transition-colors hidden sm:block"
-          aria-label="Central de Ajuda e Suporte"
-          title="Central de Ajuda"
-        >
-          <MdHelpOutline size={22} />
-        </button>
+        <div className="h-6 w-px bg-slate-200 mx-1" />
 
-        {/* Profile Avatar */}
-        <div className="flex items-center gap-3 pl-2 sm:pl-4 border-l border-slate-200">
-          <div className="w-9 h-9 rounded-full bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-700">
-            <MdAccountCircle size={26} />
+        {/* User Badge & Logout */}
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-700 font-bold text-xs">
+            <User className="w-4 h-4" />
           </div>
+          <div className="hidden lg:block text-left text-xs">
+            <p className="font-semibold text-slate-800 leading-none">Prof. Coordenador</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">NAE Institucional</p>
+          </div>
+          <button
+            type="button"
+            onClick={handleLogout}
+            aria-label="Sair da conta"
+            title="Sair do Pluralis"
+            className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </header>

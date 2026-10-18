@@ -35,7 +35,7 @@ export default function DashboardLayout({
           title="Painel de Gestão Pedagógica Inclusiva"
           subtitle="Acompanhamento de adaptações, diretrizes LBI e formação continuada"
         />
-        <main className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto">
+        <main id="main-content" tabIndex={-1} className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto focus:outline-none">
           {children}
         </main>
       </div>

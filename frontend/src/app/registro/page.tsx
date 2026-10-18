@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 import { MdErrorOutline } from 'react-icons/md';
 import { api } from '@/services/api';
+import { AccessibilityToolbar } from '@/components/accessibility/AccessibilityToolbar';
 
 export default function RegistroPage() {
   const [nome, setNome] = useState('');
@@ -49,7 +50,10 @@ export default function RegistroPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-12 flex items-center justify-center">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-slate-50 px-4 py-8 flex flex-col items-center justify-center focus:outline-none">
+      <div className="w-full max-w-md mb-4 flex justify-end">
+        <AccessibilityToolbar compact />
+      </div>
       <section className="w-full max-w-md bg-white rounded-2xl border border-slate-200 p-8 shadow-sm" aria-labelledby="registro-title">
         <Link href="/" className="block w-fit mx-auto mb-8" aria-label="Voltar à página inicial">
           <Image src="/pluralis-logo.png" alt="Pluralis — Acessibilidade Pedagógica" width={170} height={60} priority className="h-12 w-auto" />
