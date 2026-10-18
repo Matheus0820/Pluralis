@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Bell, HelpCircle, User, Moon, Sun, ZoomIn, ZoomOut, LogOut } from 'lucide-react';
+import { User, LogOut } from 'lucide-react';
 import { useAccessibility } from '@/context/AccessibilityContext';
 import { useRouter } from 'next/navigation';
 
@@ -12,14 +12,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
   const router = useRouter();
-  const {
-    highContrast,
-    toggleHighContrast,
-    increaseFontSize,
-    decreaseFontSize,
-    fontSize,
-    setGuideOpen,
-  } = useAccessibility();
+  const { setGuideOpen } = useAccessibility();
 
   const handleLogout = () => {
     localStorage.removeItem('pluralis_token');
@@ -38,47 +31,7 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
         )}
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        {/* Quick Accessibility Controls in Dashboard Header */}
-        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
-          <button
-            type="button"
-            onClick={toggleHighContrast}
-            aria-pressed={highContrast}
-            aria-label={highContrast ? 'Desativar Alto Contraste' : 'Ativar Alto Contraste (Alt+C)'}
-            title="Alternar Alto Contraste (Alt+C)"
-            className={`p-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              highContrast
-                ? 'bg-amber-400 text-slate-950 font-bold shadow-sm'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
-            }`}
-          >
-            {highContrast ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
-
-          <button
-            type="button"
-            onClick={decreaseFontSize}
-            disabled={fontSize === 'sm'}
-            aria-label="Diminuir texto"
-            title="Diminuir fonte (Alt+-)"
-            className="p-1.5 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <ZoomOut className="w-4 h-4" />
-          </button>
-
-          <button
-            type="button"
-            onClick={increaseFontSize}
-            disabled={fontSize === 'xl'}
-            aria-label="Aumentar texto"
-            title="Aumentar fonte (Alt++)"
-            className="p-1.5 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <ZoomIn className="w-4 h-4" />
-          </button>
-        </div>
-
+      <div className="flex items-center gap-3 shrink-0">
         {/* WCAG AAA Badge Button */}
         <button
           type="button"
