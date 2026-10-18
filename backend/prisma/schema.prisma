@@ -1,0 +1,125 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum CargoUsuario {
+  GESTOR
+  PROFESSOR
+  NAI
+}
+
+enum StatusRevisao {
+  PENDENTE
+  APROVADO
+}
+
+enum TipoAdaptacao {
+  TEXTO_SIMPLIFICADO
+  TEXTO_CURTO
+  AUDIO_DESCRICAO
+  MAPA_MENTAL
+  GLOSSARIO
+}
+
+enum CategoriaForum {
+  METODOLOGIAS_INCLUSIVAS
+  TECNOLOGIA_ASSISTIVA
+  NEURODIVERGENCIA
+  DUVIDAS_GERAIS
+}
+
+model Instituicao {
+  id            String    @id @default(uuid())
+  nome          String
+  cnpj          String    @unique
+  data_cadastro DateTime  @default(now())
+  usuarios      Usuario[]
+
+  @@map("instituicoes")
+}
+
+model Usuario {
+  id            String         @id @default(uuid())
+  ies_id        String
+  nome          String
+  email         String         @unique
+  senha_hash    String?
+  google_id     String?        @unique
+  cargo         CargoUsuario   @default(PROFESSOR)
+  data_cadastro DateTime       @default(now())
+
+  instituicao   Instituicao    @relation(fields: [ies_id], references: [id], onDelete: Cascade)
+  materiais     Material[]
+  topicos_forum TopicoForum[]
+  auditorias    LogAuditoria[]
+
+  @@index([ies_id])
+  @@map("usuarios")
+}
+
+model Material {
+  id                String        @id @default(uuid())
+  usuario_id        String
+  titulo            String
+  conteudo_original String        @db.Text
+  conteudo_adaptado String        @db.Text
+  tipo_adaptacao    TipoAdaptacao @default(TEXTO_SIMPLIFICADO)
+  url_audio         String?
+  status_revisao    StatusRevisao @default(PENDENTE)
+  revisado_em       DateTime?
+  publico           Boolean       @default(false)
+  data_criacao      DateTime      @default(now())
+  atualizado_em     DateTime      @updatedAt
+
+  usuario           Usuario       @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
+  @@index([usuario_id])
+  @@index([publico])
+  @@map("materiais")
+}
+
+model PromptIA {
+  id              String   @id @default(uuid())
+  titulo          String
+  descricao       String
+  template_prompt String   @db.Text
+  categoria       String   @default("Geral")
+  ativo           Boolean  @default(true)
+  data_criacao    DateTime @default(now())
+
+  @@map("prompts_ia")
+}
+
+model TopicoForum {
+  id           String         @id @default(uuid())
+  usuario_id   String
+  titulo       String
+  conteudo     String         @db.Text
+  categoria    CategoriaForum @default(DUVIDAS_GERAIS)
+  data_criacao DateTime       @default(now())
+
+  usuario      Usuario        @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
+  @@index([usuario_id])
+  @@map("topicos_forum")
+}
+
+model LogAuditoria {
+  id         String   @id @default(uuid())
+  usuario_id String?
+  acao       String
+  ip_hash    String
+  detalhes   String?  @db.Text
+  data       DateTime @default(now())
+
+  usuario    Usuario? @relation(fields: [usuario_id], references: [id], onDelete: SetNull)
+
+  @@index([usuario_id])
+  @@index([data])
+  @@map("logs_auditoria")
+}
